@@ -13,7 +13,7 @@ O sistema é código aberto com intuito que alunos da UENF participem da criaç�
 
 ## Como contribuir!
 
-Para qualquer pessoa querendo contribuir para o projeto por favor antes de contribuir leia o nosso [guia de contribuição](https://github.com/MintzyG/SCTI/blob/main/docs/CONTRIBUTING.md)
+Para qualquer pessoa querendo contribuir para o projeto por favor antes de contribuir leia o nosso [guia de contribuição](https://github.com/MintzyG/SCTI/blob/main/docs/CONTRIBUTING.md).
 
 ## License
 
