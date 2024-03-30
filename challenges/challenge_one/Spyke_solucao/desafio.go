@@ -21,8 +21,8 @@ func main() {
 	Pessoas = append(Pessoas, Pessoa{Nome: "Joazinho", Idade: 8, Cadastrado: true})
 	Pessoas = append(Pessoas, Pessoa{Nome: "Marcela", Idade: 69, Cadastrado: true})
 
-	for _, Pessoa := range Pessoas{
-		if Pessoa.Cadastrado{
+	for _, Pessoa := range Pessoas {
+		if Pessoa.Cadastrado {
 			fmt.Println(Pessoa)
 		}
 	}
