@@ -1,8 +1,9 @@
 package main
 
 import (
+	"SCTI/about"
 	"SCTI/fileserver"
-	"SCTI/middleware"
+	"html/template"
 	"log"
 	"net/http"
 )
@@ -10,13 +11,13 @@ import (
 func main() {
 	fileserver.RunFileServer()
 
-	mux := http.NewServeMux()
-	LoadRoutes(mux)
+	http.HandleFunc("/", HomeHandler)
+	http.HandleFunc("/home/", about.Endpoint)
 
-	server := http.Server{
-		Addr:    ":8080",
-		Handler: middleware.EndpointLogging(mux),
-	}
+	log.Fatal(http.ListenAndServe(":8080", nil))
+}
 
-	log.Fatal(server.ListenAndServe())
+func HomeHandler(w http.ResponseWriter, r *http.Request) {
+	fileserver.T = template.Must(template.ParseFiles("template/index.gohtml"))
+	fileserver.T.Execute(w, nil)
 }
