@@ -45,9 +45,6 @@ func (h *Handler) PostSignup(w http.ResponseWriter, r *http.Request) {
     user.Password = r.FormValue("Senha")
   }
 
-  fmt.Println(user.Email)
-  fmt.Println(user.Password)
-
   body := dto.SignUpRequest{
     Email:    user.Email,
     Password: user.Password,
