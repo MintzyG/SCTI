@@ -21,7 +21,7 @@ func start() (*supabase.Client) {
   conf := supabase.Config{
     ApiKey:     os.Getenv("SUPABASE_KEY"), 
     ProjectRef: os.Getenv("SUPABASE_URL"),
-    Debug:      true,
+    Debug:      false,
   }
   supaClient, err := supabase.New(conf)
   if err != nil {
