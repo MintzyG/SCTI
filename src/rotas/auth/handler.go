@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-
+  "time"
 	"github.com/lengzuo/supa"
 	"github.com/lengzuo/supa/dto"
 )
@@ -24,6 +24,8 @@ type SupaError struct {
 	Code      int    `json:"code"`
 	ErrorCode string `json:"error_code"`
 	Msg       string `json:"msg"`
+  Error     string `json:"error"`
+  ErrorDesc string `json:"error_description"`
 }
 
 func (h *Handler) PostSignup(w http.ResponseWriter, r *http.Request) {
@@ -64,7 +66,11 @@ func (h *Handler) PostSignup(w http.ResponseWriter, r *http.Request) {
         http.Error(w, "Anonymous sign-ins are disabled", http.StatusForbidden)
         return
       default:
-        http.Error(w, fmt.Sprintf("Error signing up: %v", supaErr.Msg), http.StatusInternalServerError)
+        if supaErr.Msg != "" {
+          http.Error(w, fmt.Sprintf("Error signing up: %s", supaErr.Msg), http.StatusInternalServerError)
+        } else {
+          http.Error(w, fmt.Sprintf("%s: %s", supaErr.Error, supaErr.ErrorDesc), http.StatusInternalServerError)
+        }
         return
       }
     }
@@ -121,7 +127,7 @@ func (h *Handler) PostLogin(w http.ResponseWriter, r *http.Request) {
     Password: user.Password,
   }
 
-  _, err := h.S.Auth.SignInWithPassword(ctx, body)
+  resp, err := h.S.Auth.SignInWithPassword(ctx, body)
   if err != nil {
     // Check if the error is of type SupaError
     var supaErr SupaError
@@ -137,14 +143,30 @@ func (h *Handler) PostLogin(w http.ResponseWriter, r *http.Request) {
         http.Error(w, "Anonymous sign-ins are disabled", http.StatusForbidden)
         return
       default:
-        http.Error(w, fmt.Sprintf("Error signing in: %v", supaErr.Msg), http.StatusInternalServerError)
+        if supaErr.Msg != "" {
+          http.Error(w, fmt.Sprintf("Error signing up: %s", supaErr.Msg), http.StatusInternalServerError)
+        } else {
+          http.Error(w, fmt.Sprintf("%s: %s", supaErr.Error, supaErr.ErrorDesc), http.StatusInternalServerError)
+        }
         return
-    }
+      }
     }
     // Handle generic error if unable to parse SupaError
     http.Error(w, fmt.Sprintf("Request error: %v", err), http.StatusInternalServerError)
     return
   }
+
+  authCookie := &http.Cookie{
+      Name:     "auth",
+      Value:    resp.AccessToken,
+      Path:     "/",
+      HttpOnly: true,
+      Secure:   true,
+      Expires:  time.Now().Add(3 * 24 * time.Hour), // Adjust the expiration time as needed
+  }
+
+  fmt.Println(resp.AccessToken)
+  http.SetCookie(w, authCookie)
 
   // Read the successful response if needed
   // var authDetail AuthDetailResp
@@ -160,7 +182,7 @@ func (h *Handler) PostLogin(w http.ResponseWriter, r *http.Request) {
   // }
 
   // Redirect to the lncc page after successful signup
-  http.Redirect(w, r, "/lncc", http.StatusSeeOther)
+  http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
 
 }
 

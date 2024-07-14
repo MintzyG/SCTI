@@ -9,6 +9,7 @@ import (
 	"SCTI/rotas/horario"
 	"SCTI/rotas/lncc"
 	"SCTI/rotas/loja"
+  "SCTI/rotas/dashboard"
 	eventos "SCTI/rotas/participantes_e_eventos"
 	"net/http"
 
@@ -25,8 +26,9 @@ func LoadRoutes(mux *http.ServeMux, s *supabase.Client) {
 	horarioHandler := &horario.Handler{}
 
   auth.RegisterRoutes(mux, s)
-  lncc.RegisterRoutes(mux)
+  dashboard.RegisterRoutes(mux)
   home.RegisterRoutes(mux)
+  lncc.RegisterRoutes(mux)
 
   mux.HandleFunc("GET /about", aboutHandler.GetAbout)
 	mux.HandleFunc("GET /eventos", eventosHandler.GetEventos)
